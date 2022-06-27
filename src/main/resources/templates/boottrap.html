@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+          integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+            crossorigin="anonymous"></script>
+
+</head>
+<body onload="findAll()">
+<div class="container">
+    <div class="row">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showAddForm()">Add</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                </ul>
+                <div class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" id="search-name"
+                           aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchCustomer()">Search</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="row mt-3">
+        <div class="col-3" id="gender"></div>
+        <div class="col-9">
+            <table class="table" style="background-color: aqua">
+                <thead>
+                <h2 style="text-align:center">CustomerInformation</h2>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">FirstName</th>
+                    <th scope="col">LastName</th>
+                    <th scope="col">gender</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody id="display">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>FirstName :</p>
+                <input type="text" id="firstname" class="form-control">
+                <p>LastName :</p>
+                <input type="text" id="lastname" class="form-control">
+                <p>Gender :</p>
+                <select id="genders" class="form-control"></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="save1()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modaledit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="modal-body" id="editForm">
+                <input type="hidden" id="id" >
+                <p>FirstName :</p>
+                <input type="text" id="firstnameedit" class="form-control">
+                <p>LastName :</p>
+                <input type="text" id="lastnameedit" class="form-control">
+                <p>Gender :</p>
+                <select id="gendersedit" class="form-control"></select>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main">
+
+    <script>
+        let main = document.getElementById("main")
+        let display = document.getElementById("display")
+        let gender1 = document.getElementById("gender")
+        let inpfirstname = document.getElementById("firstname")
+        let inplastname = document.getElementById("lastname")
+        let inpgender = document.getElementById("genders")
+        let searchname = document.getElementById("search-name")
+        let gender2 = document.getElementById("gendersedit")
+        let editForm1 = document.getElementById("editForm")
+
+        function findAll() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/customers",
+                success: function (cus) {
+                    loadTable(cus);
+                }
+            })
+        }
+
+        findAll()
+        findAllGender();
+
+        function findAllGender() {
+            $.ajax({
+                type: "Get",
+                url: "http://localhost:8080/genders",
+                success: function (gender) {
+                    let str = "";
+                    for (let i = 0; i < gender.length; i++) {
+                        str += `<h2>${gender[i].genderName}</h2>`
+                    }
+                    gender1.innerHTML = str;
+                }
+
+            })
+        }
+
+        function showAddForm() {
+            $("#modal").modal("show") // show modal
+            $.ajax({ // lấy gender
+                type: "Get",
+                url: "http://localhost:8080/genders",
+                success: function (gender) {
+                    let str = "";
+                    for (let i = 0; i < gender.length; i++) {
+                        str += `<option value="${gender[i].id}">${gender[i].genderName}</option>`
+                    }
+                    document.getElementById("genders").innerHTML = str;
+                }
+
+            })
+        }
+
+        function save1() {
+            let firstname = inpfirstname.value;
+            let lastname = inplastname.value;
+            let genderId = inpgender.value;
+            let customer = {
+                firstName: firstname,
+                lastName: lastname,
+                gender: {
+                    id: genderId,
+
+                }
+            }
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                type: "POST",
+                url: "http://localhost:8080/customers/create",
+                data: JSON.stringify(customer),
+                success: function () {
+                    findAll();
+                    $("#modal").modal("hide")
+                    inpfirstname.value = ""
+                    inplastname.value = ""
+                    inpgender.value = ""
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+            })
+        }
+
+        function showEditForm(id) {
+            $("#modaledit").modal("show")
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/customers/find/" + id,// thong qua findById Tim doi tuong va truyen vao form
+                success: function (cus) {
+                    document.getElementById("id").value = cus.id;
+                     document.getElementById("firstnameedit").value = cus.firstName;
+                     document.getElementById("lastnameedit").value = cus.lastName;
+                     document.getElementById("gendersedit").value = cus.gender.genderName;
+
+                },
+
+            })
+            $.ajax({
+                type: "GET",
+                url:"http://localhost:8080/genders",
+                success: function (gender){
+                    let str = "";
+                    for (let i = 0; i < gender.length; i++) {
+                        str += `<option value="${gender[i].id}">${gender[i].genderName}</option>`
+                    }
+                    gender2.innerHTML = str;
+                }
+            })
+
+        }
+        function saveEdit() {
+            let id1 = document.getElementById("id").value
+            // let formData = new FormData(editForm1)
+            let cus = {
+                firstName: document.getElementById('firstnameedit').value,
+                lastName: document.getElementById('lastnameedit').value,
+                gender: {
+                    id: document.getElementById('gendersedit').value,
+
+                }
+            }
+            console.log(cus)
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                type: "PUT",
+                url: "http://localhost:8080/customers/" + id1,
+                data: JSON.stringify(cus),
+                success: function () {
+
+                    findAll();
+                    $("#modal").modal("hide")
+                },
+                error: function (error) {
+                    alert(1)
+                    console.log(error)
+                },
+            })
+        }
+
+        function loadTable(cus) { // Hiện bảng
+            let str = "";
+            for (let i = 0; i < cus.length; i++) {
+                str += `<tr>
+                            <th scope="row">${i + 1}</th>
+                            <td>${cus[i].firstName}</td>
+                            <td>${cus[i].lastName}</td>
+                             <td>${cus[i].gender.genderName}</td>
+                             <td><button onclick="showEditForm(${cus[i].id})">Edit</button></td>
+                             </tr>`
+            }
+            display.innerHTML = str;
+        }
+
+        function searchCustomer() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/customers/searchlastname?lastname=" + searchname.value,
+                success: function (cus) {
+                    loadTable(cus);
+                }
+            })
+
+        }
+    </script>
+</div>
+</body>
+</html>

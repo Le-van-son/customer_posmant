@@ -51,4 +51,11 @@ public class CustomerServiceImpl implements IGeneralService<Customer>{
         return customerRepository.findAllByLastNameContaining(firstname);
     }
 
+    @Override
+    public List<Customer> getCustomerGender() {
+        return customerRepository.getCustomerGender();
+    }
+
 }
+
+

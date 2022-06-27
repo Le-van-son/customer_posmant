@@ -1,9 +1,6 @@
 package com.example.customer_postman.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Customer {
@@ -12,13 +9,16 @@ public class Customer {
     private Long id;
     private String firstName;
     private String lastName;
+    @ManyToOne
+    private Gender gender;
 
     public Customer() {}
 
-
-    @Override
-    public String toString() {
-        return String.format("Customer[id=%d, firstName='%s', lastName='%s']", id, firstName, lastName);
+    public Customer(Long id, String firstName, String lastName, Gender gender) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
     }
 
     public Long getId() {
@@ -43,5 +43,13 @@ public class Customer {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 }

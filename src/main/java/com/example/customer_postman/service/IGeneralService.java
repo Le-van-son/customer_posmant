@@ -18,4 +18,5 @@ public interface IGeneralService<T> {
 
     List<Customer>findAllByFirstNameContaining(String lastname);
     List<Customer>findAllByLastNameContaining(String firstname);
+    List<Customer> getCustomerGender();
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<button onclick="getAllCustomers()">Show</button>
+<button onclick="formCreate()">formCreate</button>
+<div id="list"></div>
+
+</body>
+<script>
+
+    let display1 = document.getElementById("list");
+
+    function getAllCustomers() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/customers",
+            success: function (arr) {
+                console.log(arr)
+                let str = "";
+                for (let i = 0; i < arr.length; i++) {
+                    str += `<h1>${arr[i].id}, ${arr[i].firstName} ${arr[i].lastName} <button onclick="formUpDate(${arr[i].id})">Edit</button> <button onclick="deleteCustomer(${arr[i].id})">Delete</button> </h1>`
+                }
+                display1.innerHTML = str;
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function formCreate() {
+        let form =
+            "           <input type=\"text\" id=\"firstname\" ><br>\n" +
+            "               <input type=\"text\" id=\"lastname\" > <br>\n" +
+            "               <input type=\"text\" id=\"gender\" > <br>\n" +
+            "               <button onclick='save()'>Thêm mới</button> <br>"
+        display1.innerHTML = form;
+    }
+
+    function save() {
+        let firstname1 = document.getElementById("firstname").value;
+        let lastname1 = document.getElementById("lastname").value;
+        let genderId = document.getElementById("gender").value;
+
+        let cus = {
+            firstName: firstname1,
+            lastName: lastname1,
+            gender: {
+                id: genderId,
+            }
+        }
+        console.log(cus)
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            type: "POST",
+            url: "http://localhost:8080/customers/create",
+            data: JSON.stringify(cus),
+            success: function () {
+                getAllCustomers();
+            },
+            error: function (error) {
+                console.log(error)
+            },
+        })
+    }
+
+    function formUpDate(id) {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/customers/find/" + id,// thong qua findById Tim doi tuong va truyen vao form
+            success: function (cus) {
+                let form =
+                    ` <input type="hidden" id="id" value="${cus.id}" ><br>
+                        <input type="text" id="firstname" value="${cus.firstName}" ><br>
+                         <input type="text" id="lastname" value="${cus.lastName}"> <br>
+                         <input type="text" id="gender" value="${cus.gender.id}" > <br>
+                        <button onclick='saveUpDate()'>Edit</button> <br>`
+                display1.innerHTML = form;
+            },
+        })
+
+
+    console.log(id)
+    }
+
+    function saveUpDate() {
+        let id1 = document.getElementById("id").value;
+        let firstname1 = document.getElementById("firstname").value;
+        let lastname1 = document.getElementById("lastname").value;
+        let genderId = document.getElementById("gender").value;
+
+        let cus = {
+
+            firstName: firstname1,
+            lastName: lastname1,
+            gender: {
+                id: genderId,
+            }
+        }
+        console.log(cus)
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            type: "PUT",
+            url: "http://localhost:8080/customers/" + id1,
+            data: JSON.stringify(cus),
+            success: function () {
+                getAllCustomers();
+            },
+            error: function (error) {
+                console.log(error)
+            },
+        })
+    }
+
+    function deleteCustomer(id) {
+        $.ajax({
+            type: "DELETE",
+            url: "http://localhost:8080/customers/delete/" + id,// thong qua findById Tim doi tuong va truyen vao form
+            success: function () {
+                getAllCustomers();
+            },
+            error: function (error) {
+                console.log(error)
+            },
+        })
+
+
+        console.log(id)
+    }
+</script>
+
+</html>
